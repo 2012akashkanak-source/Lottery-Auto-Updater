@@ -1,10 +1,11 @@
+
 name: Nagaland Lottery Auto Updater
 
 on:
   schedule:
-    - cron: '45 7 * * *'  # 1:15 PM IST
-    - cron: '45 12 * * *' # 6:15 PM IST
-    - cron: '45 14 * * *' # 8:15 PM IST
+    - cron: '45 7 * * *'
+    - cron: '45 12 * * *'
+    - cron: '45 14 * * *'
   workflow_dispatch:
 
 jobs:
@@ -19,16 +20,19 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Libraries
+      - name: Install System OCR Packages
+        run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
+
+      - name: Install Python Libraries
         run: pip install -r requirements.txt
 
-      - name: Run Python Script
+      - name: Run OCR Scraper
         run: python scraper.py
 
-      - name: Save Updated CSV to GitHub
+      - name: Save Updated CSV
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add lottery_data.csv
-          git commit -m "Nagaland Lottery Auto-update" || echo "No changes"
+          git commit -m "Auto OCR extraction for all prizes" || echo "No changes"
           git push
